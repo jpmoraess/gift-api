@@ -9,6 +9,7 @@ import (
 type CreateGiftInput struct {
 	Gifter    string `json:"gifter"`
 	Recipient string `json:"recipient"`
+	Message   string `json:"message"`
 }
 
 type CreateGiftOutput struct {
@@ -26,7 +27,7 @@ func NewCreateGift(giftRepo repository.GiftRepository) *CreateGift {
 }
 
 func (uc *CreateGift) Execute(input *CreateGiftInput) (output *CreateGiftOutput, err error) {
-	gift, err := domain.NewGift(input.Gifter, input.Recipient)
+	gift, err := domain.NewGift(input.Gifter, input.Recipient, input.Message)
 	if err != nil {
 		return
 	}
