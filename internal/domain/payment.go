@@ -9,9 +9,9 @@ import (
 type PaymentStatus int
 
 const (
-	PAYMENT_COMPLETED = iota + 1
-	PAYMENT_CANCELLED
-	PAYMENT_FAILED
+	PaymentCompleted = iota + 1
+	PaymentCancelled
+	PaymentFailed
 )
 
 type Payment struct {
@@ -24,7 +24,7 @@ func NewPayment(giftID uuid.UUID) (payment *Payment, err error) {
 	payment = &Payment{
 		id:     uuid.New(),
 		giftID: giftID,
-		status: PAYMENT_COMPLETED,
+		status: PaymentCompleted,
 	}
 
 	if err = payment.validate(); err != nil {

@@ -10,11 +10,11 @@ import (
 type GiftStatus int
 
 const (
-	GIFT_PENDING GiftStatus = iota + 1
-	GIFT_PAID
-	GIFT_APPROVED
-	GIFT_CANCELLING
-	GIFT_CANCELLED
+	GiftPending GiftStatus = iota + 1
+	GiftPaid
+	GiftApproved
+	GiftCancelling
+	GiftCancelled
 )
 
 type Gift struct {
@@ -32,7 +32,7 @@ func NewGift(gifter, recipient, message string) (gift *Gift, err error) {
 		gifter:    gifter,
 		recipient: recipient,
 		message:   message,
-		status:    GIFT_PENDING,
+		status:    GiftPending,
 		createdAt: time.Now(),
 	}
 
@@ -64,41 +64,41 @@ func (g *Gift) validate() error {
 }
 
 func (g *Gift) validateInitialStatus() error {
-	if g.status != GIFT_PENDING {
+	if g.status != GiftPending {
 		return errors.New("gift is not in correct state to initialize")
 	}
 	return nil
 }
 
 func (g *Gift) Pay() error {
-	if g.status != GIFT_PENDING {
+	if g.status != GiftPending {
 		return errors.New("gift is not in correct state for pay operation")
 	}
-	g.status = GIFT_PAID
+	g.status = GiftPaid
 	return nil
 }
 
 func (g *Gift) Approve() error {
-	if g.status != GIFT_PAID {
+	if g.status != GiftPaid {
 		return errors.New("gift is not in correct state for approve operation")
 	}
-	g.status = GIFT_APPROVED
+	g.status = GiftApproved
 	return nil
 }
 
 func (g *Gift) InitCancel() error {
-	if g.status != GIFT_PAID {
+	if g.status != GiftPaid {
 		return errors.New("gift is not in correct state for initCancel operation")
 	}
-	g.status = GIFT_CANCELLING
+	g.status = GiftCancelling
 	return nil
 }
 
 func (g *Gift) Cancel() error {
-	if !(g.status == GIFT_CANCELLING || g.status == GIFT_PENDING) {
+	if !(g.status == GiftCancelling || g.status == GiftPending) {
 		return errors.New("gift is not in correct state for cancel operation")
 	}
-	g.status = GIFT_CANCELLED
+	g.status = GiftCancelled
 	return nil
 }
 

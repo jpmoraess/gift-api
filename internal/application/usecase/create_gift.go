@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"github.com/google/uuid"
 	"github.com/jpmoraess/gift-api/internal/application/repository"
 	"github.com/jpmoraess/gift-api/internal/domain"
@@ -28,6 +29,11 @@ func NewCreateGift(giftRepo repository.GiftRepository) *CreateGift {
 
 func (uc *CreateGift) Execute(input *CreateGiftInput) (output *CreateGiftOutput, err error) {
 	gift, err := domain.NewGift(input.Gifter, input.Recipient, input.Message)
+	if err != nil {
+		return
+	}
+
+	err = uc.giftRepo.Save(context.Background(), gift)
 	if err != nil {
 		return
 	}
