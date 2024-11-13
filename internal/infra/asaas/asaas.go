@@ -35,6 +35,13 @@ type CreateBillingResponse struct {
 	Value       float64 `json:"value"`
 }
 
+type AsaasErrorResponse struct {
+	Errors []struct {
+		Code        string `json:"code"`
+		Description string `json:"description"`
+	} `json:"errors"`
+}
+
 func NewAsaas(baseUrl string, http *http.Client) *Asaas {
 	return &Asaas{
 		baseUrl: baseUrl,
@@ -53,6 +60,7 @@ func (a *Asaas) CreateBilling(
 
 	body, err := json.Marshal(request)
 	if err != nil {
+		fmt.Println("erro ao parsear o objeto de request")
 		return
 	}
 
@@ -61,16 +69,17 @@ func (a *Asaas) CreateBilling(
 	// criando a requisição
 	req, err := http.NewRequestWithContext(ctx, "POST", url, b)
 	if err != nil {
+		fmt.Println("erro ao criar a requisição")
 		return
 	}
 	req.Header.Add("access_token", token)
 	req.Header.Add("User-Agent", "i-gift")
-	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
 	// enviando a requisição
 	resp, err := a.http.Do(req)
 	if err != nil {
+		fmt.Println("erro ao enviar a requisição")
 		return
 	}
 	defer resp.Body.Close()
@@ -78,10 +87,20 @@ func (a *Asaas) CreateBilling(
 	// lendo o corpo da resposta
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("erro ao ler o corpo da resposta")
 		return
 	}
 
-	fmt.Println("status code: ", resp.StatusCode)
+	// verificando se status code da resposta é de erro (4xx, 5xx)
+	if resp.StatusCode >= 400 {
+		var errorResponse AsaasErrorResponse
+		err = json.Unmarshal(respBody, &errorResponse)
+		if err != nil {
+			fmt.Println("erro ao deserializar resposta de erro: ", err)
+			return
+		}
+		return nil, fmt.Errorf("erro na criação da cobrança: %+v", errorResponse.Errors)
+	}
 
 	// deserializando response body para a sruct CreateBillingResponse
 	err = json.Unmarshal(respBody, &response)

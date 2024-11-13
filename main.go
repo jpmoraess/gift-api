@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -10,6 +12,7 @@ import (
 	db "github.com/jpmoraess/gift-api/db/sqlc"
 	"github.com/jpmoraess/gift-api/internal/application/usecase"
 	"github.com/jpmoraess/gift-api/internal/infra"
+	"github.com/jpmoraess/gift-api/internal/infra/asaas"
 )
 
 func main() {
@@ -40,6 +43,21 @@ func main() {
 
 	// usecase
 	createGift := usecase.NewCreateGift(giftRepo)
+
+	asaasGateway := asaas.NewAsaas(config.AsaasUrl, &http.Client{})
+
+	response, err := asaasGateway.CreateBilling(context.Background(), config.AsaasApiKey, &asaas.CreateBillingRequest{
+		Customer:    "6347643",
+		BillingType: asaas.Pix,
+		Value:       5,
+		DueDate:     "2024-11-13",
+	})
+
+	if err != nil {
+		fmt.Println("erro ao criar cobrança pix.", err)
+	}
+
+	fmt.Printf("cobrança pix criada com sucesso: %+v\n", response)
 
 	app := fiber.New(fiber.Config{})
 
