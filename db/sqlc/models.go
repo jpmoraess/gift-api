@@ -7,18 +7,20 @@ package db
 import (
 	"database/sql/driver"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type GiftStatus string
 
 const (
-	GiftStatusGiftPending    GiftStatus = "GiftPending"
-	GiftStatusGiftPaid       GiftStatus = "GiftPaid"
-	GiftStatusGiftApproved   GiftStatus = "GiftApproved"
-	GiftStatusGiftCancelling GiftStatus = "GiftCancelling"
-	GiftStatusGiftCancelled  GiftStatus = "GiftCancelled"
+	GiftStatusPENDING    GiftStatus = "PENDING"
+	GiftStatusPAID       GiftStatus = "PAID"
+	GiftStatusAPPROVED   GiftStatus = "APPROVED"
+	GiftStatusCANCELLING GiftStatus = "CANCELLING"
+	GiftStatusCANCELLED  GiftStatus = "CANCELLED"
 )
 
 func (e *GiftStatus) Scan(src interface{}) error {
@@ -56,47 +58,48 @@ func (ns NullGiftStatus) Value() (driver.Value, error) {
 	return string(ns.GiftStatus), nil
 }
 
-type PaymentStatus string
+type TransactionStatus string
 
 const (
-	PaymentStatusPaymentCompleted PaymentStatus = "PaymentCompleted"
-	PaymentStatusPaymentCancelled PaymentStatus = "PaymentCancelled"
-	PaymentStatusPaymentFailed    PaymentStatus = "PaymentFailed"
+	TransactionStatusPENDING   TransactionStatus = "PENDING"
+	TransactionStatusPAID      TransactionStatus = "PAID"
+	TransactionStatusFAILED    TransactionStatus = "FAILED"
+	TransactionStatusCANCELLED TransactionStatus = "CANCELLED"
 )
 
-func (e *PaymentStatus) Scan(src interface{}) error {
+func (e *TransactionStatus) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = PaymentStatus(s)
+		*e = TransactionStatus(s)
 	case string:
-		*e = PaymentStatus(s)
+		*e = TransactionStatus(s)
 	default:
-		return fmt.Errorf("unsupported scan type for PaymentStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for TransactionStatus: %T", src)
 	}
 	return nil
 }
 
-type NullPaymentStatus struct {
-	PaymentStatus PaymentStatus `json:"payment_status"`
-	Valid         bool          `json:"valid"` // Valid is true if PaymentStatus is not NULL
+type NullTransactionStatus struct {
+	TransactionStatus TransactionStatus `json:"transaction_status"`
+	Valid             bool              `json:"valid"` // Valid is true if TransactionStatus is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullPaymentStatus) Scan(value interface{}) error {
+func (ns *NullTransactionStatus) Scan(value interface{}) error {
 	if value == nil {
-		ns.PaymentStatus, ns.Valid = "", false
+		ns.TransactionStatus, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.PaymentStatus.Scan(value)
+	return ns.TransactionStatus.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullPaymentStatus) Value() (driver.Value, error) {
+func (ns NullTransactionStatus) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.PaymentStatus), nil
+	return string(ns.TransactionStatus), nil
 }
 
 type Gift struct {
@@ -107,8 +110,10 @@ type Gift struct {
 	Status    GiftStatus `json:"status"`
 }
 
-type Payment struct {
-	ID     uuid.UUID     `json:"id"`
-	GiftID uuid.UUID     `json:"gift_id"`
-	Status PaymentStatus `json:"status"`
+type Transaction struct {
+	ID     uuid.UUID         `json:"id"`
+	GiftID uuid.UUID         `json:"gift_id"`
+	Amount pgtype.Numeric    `json:"amount"`
+	Date   time.Time         `json:"date"`
+	Status TransactionStatus `json:"status"`
 }

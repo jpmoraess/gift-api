@@ -7,14 +7,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type GiftStatus int
+type GiftStatus string
 
 const (
-	GiftPending GiftStatus = iota + 1
-	GiftPaid
-	GiftApproved
-	GiftCancelling
-	GiftCancelled
+	GiftPending    GiftStatus = "PENDING"
+	GiftPaid       GiftStatus = "PAID"
+	GiftApproved   GiftStatus = "APPROVED"
+	GiftCancelling GiftStatus = "CANCELLING"
+	GiftCancelled  GiftStatus = "CANCELLED"
 )
 
 type Gift struct {

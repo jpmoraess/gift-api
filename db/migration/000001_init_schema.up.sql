@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- gifts
 
-CREATE TYPE gift_status AS ENUM('GiftPending', 'GiftPaid', 'GiftApproved', 'GiftCancelling', 'GiftCancelled');
+CREATE TYPE gift_status AS ENUM('PENDING', 'PAID', 'APPROVED', 'CANCELLING', 'CANCELLED');
 
 CREATE TABLE "gifts" (
     "id" uuid PRIMARY KEY,
@@ -12,13 +12,15 @@ CREATE TABLE "gifts" (
     "status" gift_status NOT NULL
 );
 
--- payments
+-- transactions
 
-CREATE TYPE payment_status AS ENUM('PaymentCompleted', 'PaymentCancelled', 'PaymentFailed');
+CREATE TYPE transaction_status AS ENUM('PENDING', 'PAID', 'FAILED', 'CANCELLED');
 
-CREATE TABLE "payments" (
+CREATE TABLE "transactions" (
     "id" uuid PRIMARY KEY,
     "gift_id" uuid NOT NULL,
-    "status" payment_status NOT NULL,
+    "amount" numeric(10, 2) NOT NULL,
+    "date" timestamptz NOT NULL,
+    "status" transaction_status NOT NULL,
     FOREIGN KEY (gift_id) REFERENCES gifts(id)
 );

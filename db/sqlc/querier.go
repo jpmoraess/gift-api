@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	GetGift(ctx context.Context, id uuid.UUID) (Gift, error)
 	InsertGift(ctx context.Context, arg InsertGiftParams) (Gift, error)
+	InsertTransaction(ctx context.Context, arg InsertTransactionParams) (Transaction, error)
 }
 
 var _ Querier = (*Queries)(nil)

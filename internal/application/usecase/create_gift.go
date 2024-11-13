@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jpmoraess/gift-api/internal/application/repository"
 	"github.com/jpmoraess/gift-api/internal/domain"
@@ -20,21 +21,23 @@ type CreateGiftOutput struct {
 }
 
 type CreateGift struct {
-	giftRepo repository.GiftRepository
+	giftRepository repository.GiftRepository
 }
 
-func NewCreateGift(giftRepo repository.GiftRepository) *CreateGift {
-	return &CreateGift{giftRepo: giftRepo}
+func NewCreateGift(giftRepository repository.GiftRepository) *CreateGift {
+	return &CreateGift{giftRepository: giftRepository}
 }
 
-func (uc *CreateGift) Execute(input *CreateGiftInput) (output *CreateGiftOutput, err error) {
+func (uc *CreateGift) Execute(ctx context.Context, input *CreateGiftInput) (output *CreateGiftOutput, err error) {
 	gift, err := domain.NewGift(input.Gifter, input.Recipient, input.Message)
 	if err != nil {
+		fmt.Println("error while creating gift:", err)
 		return
 	}
 
-	err = uc.giftRepo.Save(context.Background(), gift)
+	err = uc.giftRepository.Save(ctx, gift)
 	if err != nil {
+		fmt.Println("error while saving gift:", err)
 		return
 	}
 

@@ -1,7 +1,8 @@
-package infra
+package persistence
 
 import (
 	"context"
+	"fmt"
 	db "github.com/jpmoraess/gift-api/db/sqlc"
 
 	"github.com/google/uuid"
@@ -22,11 +23,12 @@ func (g *GiftRepositoryAdapter) Save(ctx context.Context, gift *domain.Gift) (er
 		Gifter:    gift.Gifter(),
 		Recipient: gift.Recipient(),
 		Message:   gift.Message(),
-		Status:    db.GiftStatusGiftPending,
+		Status:    db.GiftStatusPENDING,
 	}
 
 	_, err = g.store.InsertGift(ctx, arg)
 	if err != nil {
+		fmt.Println("failed to save gift to db", err)
 		return err
 	}
 
