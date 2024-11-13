@@ -8,6 +8,9 @@ import (
 	"github.com/jpmoraess/gift-api/internal/domain"
 )
 
+// CreateGiftInput represents the input for creating a gift
+// @Description CreateGiftInput represents the input for creating a gift
+// @Model
 type CreateGiftInput struct {
 	Gifter    string `json:"gifter"`
 	Recipient string `json:"recipient"`

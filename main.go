@@ -3,17 +3,25 @@ package main
 import (
 	"context"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
+	_ "github.com/gofiber/swagger"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jpmoraess/gift-api/config"
 	db "github.com/jpmoraess/gift-api/db/sqlc"
+	_ "github.com/jpmoraess/gift-api/docs"
 	"github.com/jpmoraess/gift-api/internal/application/usecase"
 	"github.com/jpmoraess/gift-api/internal/infra/factory"
 	"github.com/jpmoraess/gift-api/internal/infra/gateway"
+	"github.com/jpmoraess/gift-api/internal/infra/handlers"
 	"github.com/jpmoraess/gift-api/internal/infra/persistence"
 	"log"
 	"net/http"
 )
 
+// @title			I-GIFT
+// @version		1.0
+// @description	I-GIFT is a platform for you to give gifts to your friends and family
+// @termsOfService	http://swagger.io/terms/
 func main() {
 	config, err := config.LoadConfig(".")
 	if err != nil {
@@ -55,40 +63,24 @@ func main() {
 	createGift := usecase.NewCreateGift(giftRepository)
 	processPayment := usecase.NewProcessPayment(paymentProcessor, transactionRepository)
 
+	// fiber
 	app := fiber.New(fiber.Config{})
 
-	handleCreateGift(app, createGift)
-	handleProcessPayment(app, processPayment)
+	// swagger
+	app.Get("/swagger/*", swagger.HandlerDefault)
+
+	// handlers
+	giftHandler := handlers.NewGiftHandler(createGift)
+	transactionHandler := handlers.NewTransactionHandler(processPayment)
+
+	// routes
+	app.Post("/v1/gifts", func(c *fiber.Ctx) error {
+		return giftHandler.CreateGift(c)
+	})
+
+	app.Post("/v1/transactions", func(c *fiber.Ctx) error {
+		return transactionHandler.ProcessPayment(c)
+	})
 
 	app.Listen(":8080")
-}
-
-func handleCreateGift(app *fiber.App, createGift *usecase.CreateGift) {
-	app.Post("/gifts", func(c *fiber.Ctx) (err error) {
-		input := new(usecase.CreateGiftInput)
-		if err = c.BodyParser(input); err != nil {
-			return c.Status(fiber.StatusBadRequest).Send([]byte(err.Error()))
-		}
-
-		output, err := createGift.Execute(context.Background(), input)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return c.JSON(output)
-	})
-}
-
-func handleProcessPayment(app *fiber.App, processPayment *usecase.ProcessPayment) {
-	app.Post("/transactions", func(c *fiber.Ctx) (err error) {
-		input := new(usecase.ProcessPaymentInput)
-		if err = c.BodyParser(input); err != nil {
-			return c.Status(fiber.StatusBadRequest).Send([]byte(err.Error()))
-		}
-
-		output, err := processPayment.Execute(context.Background(), input)
-		if err != nil {
-			log.Fatal(err.Error())
-		}
-		return c.JSON(output)
-	})
 }

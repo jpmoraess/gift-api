@@ -20,7 +20,7 @@ func NewAsaasPaymentProcessor(gateway *gateway.Asaas, next PaymentProcessor) *As
 }
 
 func (a *AsaasPaymentProcessor) ProcessPayment(ctx context.Context, input *ProcessPaymentInput) (output *ProcessPaymentOutput, err error) {
-	fmt.Printf("processing payment through Asaas, %+v", input)
+	fmt.Printf("processing payment through Asaas, %+v\n", input)
 
 	request := &gateway.CreateBillingRequest{
 		Customer:    "6348759",

@@ -67,7 +67,7 @@ func NewAsaas(config *config.Config, http *http.Client) *Asaas {
 }
 
 // CreateBilling - create billing
-// See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta// See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta
+// See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta
 func (a *Asaas) CreateBilling(ctx context.Context, request *CreateBillingRequest) (response *CreateBillingResponse, err error) {
 
 	url := fmt.Sprintf("%s/v3/lean/payments", a.config.AsaasUrl)

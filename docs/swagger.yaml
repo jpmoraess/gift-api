@@ -1,0 +1,63 @@
+definitions:
+  usecase.CreateGiftInput:
+    description: CreateGiftInput represents the input for creating a gift
+    properties:
+      gifter:
+        type: string
+      message:
+        type: string
+      recipient:
+        type: string
+    type: object
+  usecase.ProcessPaymentInput:
+    description: ProcessPaymentInput represents the input for creating a transaction
+    properties:
+      amount:
+        type: number
+      giftId:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: I-GIFT is a platform for you to give gifts to your friends and family
+  termsOfService: http://swagger.io/terms/
+  title: I-GIFT
+  version: "1.0"
+paths:
+  /v1/gifts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new gift
+      parameters:
+      - description: the request body for gift creation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.CreateGiftInput'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new gift
+      tags:
+      - gifts
+  /v1/transactions:
+    post:
+      consumes:
+      - application/json
+      description: Create a new payment
+      parameters:
+      - description: the request body for transaction creation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.ProcessPaymentInput'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new payment
+      tags:
+      - gifts
+swagger: "2.0"

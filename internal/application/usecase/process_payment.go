@@ -9,6 +9,9 @@ import (
 	"github.com/jpmoraess/gift-api/internal/infra/chain"
 )
 
+// ProcessPaymentInput represents the input for creating a transaction
+// @Description ProcessPaymentInput represents the input for creating a transaction
+// @Model
 type ProcessPaymentInput struct {
 	GiftID uuid.UUID `json:"giftId"`
 	Amount float64   `json:"amount"`

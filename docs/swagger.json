@@ -1,0 +1,95 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "I-GIFT is a platform for you to give gifts to your friends and family",
+        "title": "I-GIFT",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/v1/gifts": {
+            "post": {
+                "description": "Create a new gift",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gifts"
+                ],
+                "summary": "Create a new gift",
+                "parameters": [
+                    {
+                        "description": "the request body for gift creation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.CreateGiftInput"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/transactions": {
+            "post": {
+                "description": "Create a new payment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "gifts"
+                ],
+                "summary": "Create a new payment",
+                "parameters": [
+                    {
+                        "description": "the request body for transaction creation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.ProcessPaymentInput"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        }
+    },
+    "definitions": {
+        "usecase.CreateGiftInput": {
+            "description": "CreateGiftInput represents the input for creating a gift",
+            "type": "object",
+            "properties": {
+                "gifter": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "recipient": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecase.ProcessPaymentInput": {
+            "description": "ProcessPaymentInput represents the input for creating a transaction",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "giftId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
