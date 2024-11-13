@@ -2,16 +2,23 @@ package main
 
 import (
 	"context"
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jpmoraess/gift-api/config"
 	db "github.com/jpmoraess/gift-api/db/sqlc"
 	"github.com/jpmoraess/gift-api/internal/application/usecase"
 	"github.com/jpmoraess/gift-api/internal/infra"
-	"log"
 )
 
 func main() {
-	dbConfig, err := pgxpool.ParseConfig("postgres://postgres:postgres@localhost:5432/postgres")
+	config, err := config.LoadConfig(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dbConfig, err := pgxpool.ParseConfig(config.DBSource)
 	if err != nil {
 		log.Fatal(err)
 	}
