@@ -5,10 +5,13 @@ import "context"
 // ProcessPaymentInput - represents object to process payment
 type ProcessPaymentInput struct {
 	Amount float64 `json:"amount"`
+	// ExternalReference - represents my application transaction id into gateway
+	ExternalReference string `json:"externalReference"`
 }
 
 // ProcessPaymentOutput - represents response object after payment process
 type ProcessPaymentOutput struct {
+	ID string `json:"id"`
 }
 
 // PaymentProcessor - defines the processPayment method and setNext method to indicate the next processor in chain

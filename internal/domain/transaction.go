@@ -17,11 +17,12 @@ const (
 )
 
 type Transaction struct {
-	id     uuid.UUID
-	giftID uuid.UUID
-	amount float64
-	date   time.Time
-	status TransactionStatus
+	id         uuid.UUID
+	giftID     uuid.UUID
+	externalID string
+	amount     float64
+	date       time.Time
+	status     TransactionStatus
 }
 
 func NewTransaction(giftID uuid.UUID, amount float64) (transaction *Transaction, err error) {
@@ -37,7 +38,7 @@ func NewTransaction(giftID uuid.UUID, amount float64) (transaction *Transaction,
 		return
 	}
 
-	if err = transaction.validateInitialStatus(); err != nil {
+	if err = transaction.validateInitialState(); err != nil {
 		return
 	}
 
@@ -57,9 +58,12 @@ func (t *Transaction) validate() error {
 	return nil
 }
 
-func (t *Transaction) validateInitialStatus() error {
+func (t *Transaction) validateInitialState() error {
 	if t.status != TransactionPending {
 		return errors.New("status is not in correct state to initialize")
+	}
+	if len(t.externalID) > 0 {
+		return errors.New("externalID is not in correct state to initialize")
 	}
 	return nil
 }
@@ -77,6 +81,14 @@ func (t *Transaction) ID() uuid.UUID {
 
 func (t *Transaction) GiftID() uuid.UUID {
 	return t.giftID
+}
+
+func (t *Transaction) ExternalID() string {
+	return t.externalID
+}
+
+func (t *Transaction) SetExternalID(externalID string) {
+	t.externalID = externalID
 }
 
 func (t *Transaction) Amount() float64 {

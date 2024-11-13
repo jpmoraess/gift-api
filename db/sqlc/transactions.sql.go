@@ -13,23 +13,25 @@ import (
 )
 
 const insertTransaction = `-- name: InsertTransaction :one
-INSERT INTO transactions (id, gift_id, amount, date, status)
-VALUES ($1, $2, $3, $4, $5)
-RETURNING id, gift_id, amount, date, status
+INSERT INTO transactions (id, gift_id, external_id, amount, date, status)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, gift_id, external_id, amount, date, status
 `
 
 type InsertTransactionParams struct {
-	ID     uuid.UUID         `json:"id"`
-	GiftID uuid.UUID         `json:"gift_id"`
-	Amount float64           `json:"amount"`
-	Date   time.Time         `json:"date"`
-	Status TransactionStatus `json:"status"`
+	ID         uuid.UUID         `json:"id"`
+	GiftID     uuid.UUID         `json:"gift_id"`
+	ExternalID string            `json:"external_id"`
+	Amount     float64           `json:"amount"`
+	Date       time.Time         `json:"date"`
+	Status     TransactionStatus `json:"status"`
 }
 
 func (q *Queries) InsertTransaction(ctx context.Context, arg InsertTransactionParams) (Transaction, error) {
 	row := q.db.QueryRow(ctx, insertTransaction,
 		arg.ID,
 		arg.GiftID,
+		arg.ExternalID,
 		arg.Amount,
 		arg.Date,
 		arg.Status,
@@ -38,6 +40,7 @@ func (q *Queries) InsertTransaction(ctx context.Context, arg InsertTransactionPa
 	err := row.Scan(
 		&i.ID,
 		&i.GiftID,
+		&i.ExternalID,
 		&i.Amount,
 		&i.Date,
 		&i.Status,

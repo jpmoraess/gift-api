@@ -20,10 +20,10 @@ func NewAsaasPaymentProcessor(gateway *gateway.Asaas, next PaymentProcessor) *As
 }
 
 func (a *AsaasPaymentProcessor) ProcessPayment(ctx context.Context, input *ProcessPaymentInput) (output *ProcessPaymentOutput, err error) {
-	fmt.Println("processing payment through Asaas...")
+	fmt.Printf("processing payment through Asaas, %+v", input)
 
 	request := &gateway.CreateBillingRequest{
-		Customer:    "6347643",
+		Customer:    "6348759",
 		BillingType: gateway.Pix,
 		Value:       input.Amount,
 		DueDate:     "2024-11-14",
@@ -38,6 +38,9 @@ func (a *AsaasPaymentProcessor) ProcessPayment(ctx context.Context, input *Proce
 
 	if len(response.ID) > 0 {
 		fmt.Println("payment id:", response.ID)
+		output = &ProcessPaymentOutput{
+			ID: response.ID,
+		}
 		return output, err
 	} else {
 		fmt.Println("failed processing payment request through Asaas...")

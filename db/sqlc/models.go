@@ -111,9 +111,10 @@ type Gift struct {
 }
 
 type Transaction struct {
-	ID     uuid.UUID         `json:"id"`
-	GiftID uuid.UUID         `json:"gift_id"`
-	Amount pgtype.Numeric    `json:"amount"`
-	Date   time.Time         `json:"date"`
-	Status TransactionStatus `json:"status"`
+	ID         uuid.UUID         `json:"id"`
+	GiftID     uuid.UUID         `json:"gift_id"`
+	ExternalID string            `json:"external_id"`
+	Amount     pgtype.Numeric    `json:"amount"`
+	Date       time.Time         `json:"date"`
+	Status     TransactionStatus `json:"status"`
 }

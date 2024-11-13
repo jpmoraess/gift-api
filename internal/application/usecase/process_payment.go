@@ -42,13 +42,15 @@ func (p *ProcessPayment) Execute(ctx context.Context, input *ProcessPaymentInput
 		return
 	}
 
-	_, err = p.paymentProcessor.ProcessPayment(ctx, &chain.ProcessPaymentInput{
-		Amount: transaction.Amount(),
+	processPaymentOutput, err := p.paymentProcessor.ProcessPayment(ctx, &chain.ProcessPaymentInput{
+		Amount:            transaction.Amount(),
+		ExternalReference: transaction.ID().String(),
 	})
 	if err != nil {
 		fmt.Println("error while processing payment:", err)
 		return
 	}
+	transaction.SetExternalID(processPaymentOutput.ID)
 
 	err = p.transactionRepository.Save(ctx, transaction)
 	if err != nil {
