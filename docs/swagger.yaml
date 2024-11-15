@@ -9,6 +9,24 @@ definitions:
       recipient:
         type: string
     type: object
+  usecase.CreateUserInput:
+    properties:
+      email:
+        type: string
+      fullName:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  usecase.GenerateTokenInput:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   usecase.ProcessPaymentInput:
     description: ProcessPaymentInput represents the input for creating a transaction
     properties:
@@ -24,6 +42,24 @@ info:
   title: I-GIFT
   version: "1.0"
 paths:
+  /auth/token:
+    post:
+      consumes:
+      - application/json
+      description: Generate a new access token
+      parameters:
+      - description: the request body for token generation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.GenerateTokenInput'
+      produces:
+      - application/json
+      responses: {}
+      summary: Generate a new access token
+      tags:
+      - token
   /v1/gifts:
     post:
       consumes:
@@ -59,5 +95,23 @@ paths:
       responses: {}
       summary: Create a new payment
       tags:
-      - gifts
+      - transactions
+  /v1/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: the request body for user creation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/usecase.CreateUserInput'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new user
+      tags:
+      - users
 swagger: "2.0"

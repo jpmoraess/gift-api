@@ -16,6 +16,33 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/token": {
+            "post": {
+                "description": "Generate a new access token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "token"
+                ],
+                "summary": "Generate a new access token",
+                "parameters": [
+                    {
+                        "description": "the request body for token generation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.GenerateTokenInput"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/v1/gifts": {
             "post": {
                 "description": "Create a new gift",
@@ -53,7 +80,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "gifts"
+                    "transactions"
                 ],
                 "summary": "Create a new payment",
                 "parameters": [
@@ -64,6 +91,33 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/usecase.ProcessPaymentInput"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/v1/users": {
+            "post": {
+                "description": "Create a new user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a new user",
+                "parameters": [
+                    {
+                        "description": "the request body for user creation",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/usecase.CreateUserInput"
                         }
                     }
                 ],
@@ -83,6 +137,34 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "recipient": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecase.CreateUserInput": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "fullName": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "usecase.GenerateTokenInput": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

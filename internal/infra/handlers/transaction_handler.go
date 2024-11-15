@@ -19,7 +19,7 @@ func NewTransactionHandler(processPayment *usecase.ProcessPayment) *TransactionH
 //
 //	@Summary		Create a new payment
 //	@Description	Create a new payment
-//	@Tags			gifts
+//	@Tags			transactions
 //	@Accept			json
 //	@Produce		json
 //	@Param			request	body	usecase.ProcessPaymentInput	true	"the request body for transaction creation"

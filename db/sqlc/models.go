@@ -118,3 +118,12 @@ type Transaction struct {
 	Date       time.Time         `json:"date"`
 	Status     TransactionStatus `json:"status"`
 }
+
+type User struct {
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	Password  string    `json:"password"`
+	FullName  string    `json:"full_name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+}

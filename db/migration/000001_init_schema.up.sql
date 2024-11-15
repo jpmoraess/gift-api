@@ -1,5 +1,19 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- users
+
+CREATE TABLE "users" (
+    "id" uuid PRIMARY KEY,
+    "username" varchar UNIQUE NOT NULL,
+    "password" varchar NOT NULL,
+    "full_name" varchar NOT NULL,
+    "email" varchar UNIQUE NOT NULL,
+    "created_at" timestamptz NOT NULL DEFAULT (now())
+);
+
+CREATE INDEX ON "users" ("email");
+CREATE INDEX ON "users" ("username");
+
 -- gifts
 
 CREATE TYPE gift_status AS ENUM('PENDING', 'PAID', 'APPROVED', 'CANCELLING', 'CANCELLED');

@@ -11,7 +11,11 @@ import (
 )
 
 type Querier interface {
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetGift(ctx context.Context, id uuid.UUID) (Gift, error)
+	GetUser(ctx context.Context, id uuid.UUID) (User, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
+	GetUserByUsername(ctx context.Context, username string) (User, error)
 	InsertGift(ctx context.Context, arg InsertGiftParams) (Gift, error)
 	InsertTransaction(ctx context.Context, arg InsertTransactionParams) (Transaction, error)
 }
