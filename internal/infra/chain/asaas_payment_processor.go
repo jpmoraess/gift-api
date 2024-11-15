@@ -3,15 +3,16 @@ package chain
 import (
 	"context"
 	"fmt"
+
 	"github.com/jpmoraess/gift-api/internal/infra/gateway"
 )
 
 type AsaasPaymentProcessor struct {
 	BasePaymentProcessor
-	gateway *gateway.Asaas
+	gateway *gateway.AsaasPaymentGateway
 }
 
-func NewAsaasPaymentProcessor(gateway *gateway.Asaas, next PaymentProcessor) *AsaasPaymentProcessor {
+func NewAsaasPaymentProcessor(gateway *gateway.AsaasPaymentGateway, next PaymentProcessor) *AsaasPaymentProcessor {
 	processor := &AsaasPaymentProcessor{
 		gateway:              gateway,
 		BasePaymentProcessor: BasePaymentProcessor{next: next},

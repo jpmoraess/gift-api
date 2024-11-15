@@ -5,12 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/jpmoraess/gift-api/config"
 	"io"
 	"net/http"
+
+	"github.com/jpmoraess/gift-api/config"
 )
 
-type Asaas struct {
+type AsaasPaymentGateway struct {
 	config *config.Config
 	http   *http.Client
 }
@@ -59,8 +60,8 @@ type ErrorResponse struct {
 	} `json:"errors"`
 }
 
-func NewAsaas(config *config.Config, http *http.Client) *Asaas {
-	return &Asaas{
+func NewAsaasPaymentGateway(config *config.Config, http *http.Client) *AsaasPaymentGateway {
+	return &AsaasPaymentGateway{
 		config: config,
 		http:   http,
 	}
@@ -68,7 +69,7 @@ func NewAsaas(config *config.Config, http *http.Client) *Asaas {
 
 // CreateBilling - create billing
 // See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta
-func (a *Asaas) CreateBilling(ctx context.Context, request *CreateBillingRequest) (response *CreateBillingResponse, err error) {
+func (a *AsaasPaymentGateway) CreateBilling(ctx context.Context, request *CreateBillingRequest) (response *CreateBillingResponse, err error) {
 
 	url := fmt.Sprintf("%s/v3/lean/payments", a.config.AsaasUrl)
 

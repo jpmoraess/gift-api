@@ -6,14 +6,14 @@ import (
 )
 
 type PaymentProcessorFactory struct {
-	asaasGateway *gateway.Asaas
+	asaasPaymentGateway *gateway.AsaasPaymentGateway
 }
 
-func NewPaymentProcessorFactory(asaasGateway *gateway.Asaas) *PaymentProcessorFactory {
-	return &PaymentProcessorFactory{asaasGateway: asaasGateway}
+func NewPaymentProcessorFactory(asaasPaymentGateway *gateway.AsaasPaymentGateway) *PaymentProcessorFactory {
+	return &PaymentProcessorFactory{asaasPaymentGateway: asaasPaymentGateway}
 }
 
 func (factory *PaymentProcessorFactory) CreatePaymentProcessor() chain.PaymentProcessor {
-	asaasProcessor := chain.NewAsaasPaymentProcessor(factory.asaasGateway, nil)
+	asaasProcessor := chain.NewAsaasPaymentProcessor(factory.asaasPaymentGateway, nil)
 	return asaasProcessor
 }
