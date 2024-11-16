@@ -54,10 +54,10 @@ func main() {
 	store := db.NewStore(pool)
 
 	// payment gateway
-	asaasGateway := gateway.NewAsaas(&config, &http.Client{})
+	asaasPaymentGateway := gateway.NewAsaasPaymentGateway(&config, &http.Client{})
 
 	// factory
-	paymentProcessorFactory := factory.NewPaymentProcessorFactory(asaasGateway)
+	paymentProcessorFactory := factory.NewPaymentProcessorFactory(asaasPaymentGateway)
 
 	// processor
 	paymentProcessor := paymentProcessorFactory.CreatePaymentProcessor()

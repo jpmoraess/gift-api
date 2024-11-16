@@ -14,6 +14,6 @@ func NewPaymentProcessorFactory(asaasPaymentGateway *gateway.AsaasPaymentGateway
 }
 
 func (factory *PaymentProcessorFactory) CreatePaymentProcessor() chain.PaymentProcessor {
-	asaasProcessor := chain.NewAsaasPaymentProcessor(factory.asaasPaymentGateway, nil)
-	return asaasProcessor
+	asaasPaymentProcessor := chain.NewAsaasPaymentProcessor(factory.asaasPaymentGateway, nil)
+	return asaasPaymentProcessor
 }
