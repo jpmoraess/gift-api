@@ -112,7 +112,7 @@ func main() {
 		return transactionHandler.ProcessPayment(c)
 	})
 
-	app.Post("/v1/files/upload", func(c *fiber.Ctx) error {
+	app.Post("/v1/files", func(c *fiber.Ctx) error {
 		return fileHandler.Upload(c)
 	})
 

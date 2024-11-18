@@ -16,13 +16,13 @@ func NewFileHandler(fileService *storage.FileService) *FileHandler {
 
 // Upload - handles the file upload
 //
-//	@Summary		File upload
-//	@Description	File upload
+//	@Summary		Upload file
+//	@Description	Upload file
 //	@Tags			files
 //	@Accept			multipart/form-data
 //	@Produce		json
 //	@Param			file formData file true "File"
-//	@Router			/v1/files/upload [post]
+//	@Router			/v1/files [post]
 func (fh *FileHandler) Upload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -39,6 +39,15 @@ func (fh *FileHandler) Upload(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fileRecord)
 }
 
+// Download - handles the file download
+//
+//	@Summary		Download file
+//	@Description	Download file
+//	@Tags			files
+//	@Accept			json
+//	@Produce		octet-stream
+//	@Param			id path string true "File ID"
+//	@Router			/v1/files/{id} [get]
 func (fh *FileHandler) Download(c *fiber.Ctx) error {
 	id := uuid.MustParse(c.Params("id"))
 	data, err := fh.FileService.Download(c.Context(), id)
@@ -49,6 +58,15 @@ func (fh *FileHandler) Download(c *fiber.Ctx) error {
 	return c.Send(data)
 }
 
+// Delete - handles the file delete
+//
+//	@Summary		Delete file
+//	@Description	Delete file
+//	@Tags			files
+//	@Accept			json
+//	@Produce		octet-stream
+//	@Param			id path string true "File ID"
+//	@Router			/v1/files/{id} [delete]
 func (fh *FileHandler) Delete(c *fiber.Ctx) error {
 	id := uuid.MustParse(c.Params("id"))
 	if err := fh.FileService.Delete(c.Context(), id); err != nil {
