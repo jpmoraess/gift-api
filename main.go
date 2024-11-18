@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	_ "github.com/gofiber/swagger"
@@ -14,9 +17,8 @@ import (
 	"github.com/jpmoraess/gift-api/internal/infra/gateway"
 	"github.com/jpmoraess/gift-api/internal/infra/handlers"
 	"github.com/jpmoraess/gift-api/internal/infra/persistence"
+	"github.com/jpmoraess/gift-api/internal/infra/storage"
 	"github.com/jpmoraess/gift-api/token"
-	"log"
-	"net/http"
 )
 
 // @title			I-GIFT
@@ -63,6 +65,7 @@ func main() {
 	paymentProcessor := paymentProcessorFactory.CreatePaymentProcessor()
 
 	// repository
+	fileRepository := storage.NewFileRepository(store)
 	giftRepository := persistence.NewGiftRepositoryAdapter(store)
 	userRepository := persistence.NewUserRepositoryAdapter(store)
 	transactionRepository := persistence.NewTransactionRepositoryAdapter(store)
@@ -73,6 +76,12 @@ func main() {
 	generateToken := usecase.NewGenerateToken(tokenMaker, userRepository)
 	processPayment := usecase.NewProcessPayment(paymentProcessor, transactionRepository)
 
+	// storage
+	localStorage := storage.NewLocalStorage("/home/jpmoraess/Desktop")
+
+	// services
+	fileService := storage.NewFileService(localStorage, fileRepository)
+
 	// fiber
 	app := fiber.New(fiber.Config{})
 
@@ -82,6 +91,7 @@ func main() {
 	// handlers
 	giftHandler := handlers.NewGiftHandler(createGift)
 	userHandler := handlers.NewUserHandler(createUser)
+	fileHandler := handlers.NewFileHandler(fileService)
 	tokenHandler := handlers.NewTokenHandler(generateToken)
 	transactionHandler := handlers.NewTransactionHandler(processPayment)
 
@@ -100,6 +110,18 @@ func main() {
 
 	app.Post("/v1/transactions", func(c *fiber.Ctx) error {
 		return transactionHandler.ProcessPayment(c)
+	})
+
+	app.Post("/v1/files/upload", func(c *fiber.Ctx) error {
+		return fileHandler.Upload(c)
+	})
+
+	app.Get("/v1/files/:id", func(c *fiber.Ctx) error {
+		return fileHandler.Download(c)
+	})
+
+	app.Delete("/v1/files/:id", func(c *fiber.Ctx) error {
+		return fileHandler.Delete(c)
 	})
 
 	app.Listen(":8080")

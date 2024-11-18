@@ -1,5 +1,14 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- files
+CREATE TABLE "files" (
+    "id" uuid PRIMARY KEY,
+    "name" varchar NOT NULL,
+    "extension" varchar NOT NULL,
+    "size" integer NOT NULL,
+    "path" varchar NOT NULL
+);
+
 -- users
 
 CREATE TABLE "users" (
