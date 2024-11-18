@@ -89,13 +89,26 @@ func main() {
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	// handlers
-	giftHandler := handlers.NewGiftHandler(createGift)
 	userHandler := handlers.NewUserHandler(createUser)
+	giftHandler := handlers.NewGiftHandler(createGift)
 	fileHandler := handlers.NewFileHandler(fileService)
 	tokenHandler := handlers.NewTokenHandler(generateToken)
 	transactionHandler := handlers.NewTransactionHandler(processPayment)
 
 	// routes
+	RegisterRoutes(app, userHandler, giftHandler, fileHandler, tokenHandler, transactionHandler)
+
+	app.Listen(":8080")
+}
+
+func RegisterRoutes(
+	app *fiber.App,
+	userHandler *handlers.UserHandler,
+	giftHandler *handlers.GiftHandler,
+	fileHandler *handlers.FileHandler,
+	tokenHandler *handlers.TokenHandler,
+	transactionHandler *handlers.TransactionHandler,
+) {
 	app.Post("/auth/token", func(c *fiber.Ctx) error {
 		return tokenHandler.GenerateToken(c)
 	})
@@ -123,6 +136,4 @@ func main() {
 	app.Delete("/v1/files/:id", func(c *fiber.Ctx) error {
 		return fileHandler.Delete(c)
 	})
-
-	app.Listen(":8080")
 }
