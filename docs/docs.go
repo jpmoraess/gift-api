@@ -43,6 +43,31 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/v1/files/upload": {
+            "post": {
+                "description": "File upload",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "File upload",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "File",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/v1/gifts": {
             "post": {
                 "description": "Create a new gift",

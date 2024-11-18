@@ -9,6 +9,7 @@ type Config struct {
 	SymmetricKey string `mapstructure:"SYMMETRIC_KEY"`
 	AsaasUrl     string `mapstructure:"ASAAS_URL"`
 	AsaasApiKey  string `mapstructure:"ASAAS_API_KEY"`
+	FilePath     string `mapstructure:"FILE_PATH"`
 }
 
 // LoadConfig reads configuration from file or environment variables

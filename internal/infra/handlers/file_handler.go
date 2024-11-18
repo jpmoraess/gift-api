@@ -14,6 +14,15 @@ func NewFileHandler(fileService *storage.FileService) *FileHandler {
 	return &FileHandler{FileService: fileService}
 }
 
+// Upload - handles the file upload
+//
+//	@Summary		File upload
+//	@Description	File upload
+//	@Tags			files
+//	@Accept			multipart/form-data
+//	@Produce		json
+//	@Param			file formData file true "File"
+//	@Router			/v1/files/upload [post]
 func (fh *FileHandler) Upload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
 	if err != nil {

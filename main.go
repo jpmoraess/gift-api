@@ -77,7 +77,7 @@ func main() {
 	processPayment := usecase.NewProcessPayment(paymentProcessor, transactionRepository)
 
 	// storage
-	localStorage := storage.NewLocalStorage("/home/jpmoraess/Desktop")
+	localStorage := storage.NewLocalStorage(config.FilePath)
 
 	// services
 	fileService := storage.NewFileService(localStorage, fileRepository)

@@ -27,13 +27,23 @@ func (ls *LocalStorage) Store(file *multipart.FileHeader, destPath string) (stri
 	if err != nil {
 		return "", err
 	}
-	defer src.Close()
+	defer func(src multipart.File) {
+		err = src.Close()
+		if err != nil {
+
+		}
+	}(src)
 
 	dst, err := os.Create(fullPath)
 	if err != nil {
 		return "", err
 	}
-	defer dst.Close()
+	defer func(dst *os.File) {
+		err = dst.Close()
+		if err != nil {
+
+		}
+	}(dst)
 
 	if _, err = io.Copy(dst, src); err != nil {
 		return "", err

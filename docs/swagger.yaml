@@ -60,6 +60,23 @@ paths:
       summary: Generate a new access token
       tags:
       - token
+  /v1/files/upload:
+    post:
+      consumes:
+      - multipart/form-data
+      description: File upload
+      parameters:
+      - description: File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses: {}
+      summary: File upload
+      tags:
+      - files
   /v1/gifts:
     post:
       consumes:
