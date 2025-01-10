@@ -66,12 +66,10 @@ func main() {
 
 	// repository
 	fileRepository := storage.NewFileRepository(store)
-	giftRepository := persistence.NewGiftRepositoryAdapter(store)
 	userRepository := persistence.NewUserRepositoryAdapter(store)
 	transactionRepository := persistence.NewTransactionRepositoryAdapter(store)
 
 	// usecase
-	createGift := usecase.NewCreateGift(giftRepository)
 	createUser := usecase.NewCreateUser(userRepository)
 	generateToken := usecase.NewGenerateToken(tokenMaker, userRepository)
 	generateCharge := usecase.NewGenerateCharge(chargeGenerator, transactionRepository)
@@ -90,13 +88,12 @@ func main() {
 
 	// handlers
 	userHandler := handlers.NewUserHandler(createUser)
-	giftHandler := handlers.NewGiftHandler(createGift)
 	fileHandler := handlers.NewFileHandler(fileService)
 	tokenHandler := handlers.NewTokenHandler(generateToken)
 	transactionHandler := handlers.NewTransactionHandler(generateCharge)
 
 	// routes
-	RegisterRoutes(app, userHandler, giftHandler, fileHandler, tokenHandler, transactionHandler)
+	RegisterRoutes(app, userHandler, fileHandler, tokenHandler, transactionHandler)
 
 	app.Listen(":8080")
 }
@@ -104,17 +101,12 @@ func main() {
 func RegisterRoutes(
 	app *fiber.App,
 	userHandler *handlers.UserHandler,
-	giftHandler *handlers.GiftHandler,
 	fileHandler *handlers.FileHandler,
 	tokenHandler *handlers.TokenHandler,
 	transactionHandler *handlers.TransactionHandler,
 ) {
 	app.Post("/auth/token", func(c *fiber.Ctx) error {
 		return tokenHandler.GenerateToken(c)
-	})
-
-	app.Post("/v1/gifts", func(c *fiber.Ctx) error {
-		return giftHandler.CreateGift(c)
 	})
 
 	app.Post("/v1/users", func(c *fiber.Ctx) error {

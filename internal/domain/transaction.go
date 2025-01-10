@@ -18,17 +18,15 @@ const (
 
 type Transaction struct {
 	id         uuid.UUID
-	giftID     uuid.UUID
 	externalID string
 	amount     float64
 	date       time.Time
 	status     TransactionStatus
 }
 
-func NewTransaction(giftID uuid.UUID, amount float64) (transaction *Transaction, err error) {
+func NewTransaction(amount float64) (transaction *Transaction, err error) {
 	transaction = &Transaction{
 		id:     uuid.New(),
-		giftID: giftID,
 		amount: amount,
 		date:   time.Now(),
 		status: TransactionPending,
@@ -48,9 +46,6 @@ func NewTransaction(giftID uuid.UUID, amount float64) (transaction *Transaction,
 func (t *Transaction) validate() error {
 	if t.id == uuid.Nil {
 		return errors.New("id is required")
-	}
-	if t.giftID == uuid.Nil {
-		return errors.New("giftID is required")
 	}
 	if t.amount <= 0 {
 		return errors.New("amount must be greater than zero")
@@ -77,10 +72,6 @@ func (t *Transaction) Pay() error {
 
 func (t *Transaction) ID() uuid.UUID {
 	return t.id
-}
-
-func (t *Transaction) GiftID() uuid.UUID {
-	return t.giftID
 }
 
 func (t *Transaction) ExternalID() string {

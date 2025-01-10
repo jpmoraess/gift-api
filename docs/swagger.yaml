@@ -1,14 +1,4 @@
 definitions:
-  usecase.CreateGiftInput:
-    description: CreateGiftInput represents the input for creating a gift
-    properties:
-      gifter:
-        type: string
-      message:
-        type: string
-      recipient:
-        type: string
-    type: object
   usecase.CreateUserInput:
     properties:
       email:
@@ -20,19 +10,17 @@ definitions:
       username:
         type: string
     type: object
+  usecase.GenerateChargeInput:
+    description: GenerateChargeInput represents the input for creating a transaction
+    properties:
+      amount:
+        type: number
+    type: object
   usecase.GenerateTokenInput:
     properties:
       password:
         type: string
       username:
-        type: string
-    type: object
-  usecase.ProcessPaymentInput:
-    description: ProcessPaymentInput represents the input for creating a transaction
-    properties:
-      amount:
-        type: number
-      giftId:
         type: string
     type: object
 info:
@@ -60,11 +48,11 @@ paths:
       summary: Generate a new access token
       tags:
       - token
-  /v1/files/upload:
+  /v1/files:
     post:
       consumes:
       - multipart/form-data
-      description: File upload
+      description: Upload file
       parameters:
       - description: File
         in: formData
@@ -74,43 +62,58 @@ paths:
       produces:
       - application/json
       responses: {}
-      summary: File upload
+      summary: Upload file
       tags:
       - files
-  /v1/gifts:
-    post:
+  /v1/files/{id}:
+    delete:
       consumes:
       - application/json
-      description: Create a new gift
+      description: Delete file
       parameters:
-      - description: the request body for gift creation
-        in: body
-        name: request
+      - description: File ID
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/usecase.CreateGiftInput'
+        type: string
       produces:
-      - application/json
+      - application/octet-stream
       responses: {}
-      summary: Create a new gift
+      summary: Delete file
       tags:
-      - gifts
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Download file
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: Download file
+      tags:
+      - files
   /v1/transactions:
     post:
       consumes:
       - application/json
-      description: Create a new payment
+      description: Create a new transaction
       parameters:
       - description: the request body for transaction creation
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/usecase.ProcessPaymentInput'
+          $ref: '#/definitions/usecase.GenerateChargeInput'
       produces:
       - application/json
       responses: {}
-      summary: Create a new payment
+      summary: Create a new transaction
       tags:
       - transactions
   /v1/users:

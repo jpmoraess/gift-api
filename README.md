@@ -6,6 +6,6 @@
 
 **RUN MIGRATE**: migrate create -ext sql -dir db/migration -seq init_schema
 
-migrate -path ./db/migration -database "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" -verbose up
+migrate -path ./db/migration -database "postgresql://postgres:postgres@localhost:5432/golang?sslmode=disable" -verbose up
 
-migrate -path ./db/migration -database "postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable" -verbose down
+migrate -path ./db/migration -database "postgresql://postgres:postgres@localhost:5432/golang?sslmode=disable" -verbose down

@@ -18,7 +18,6 @@ func NewTransactionRepositoryAdapter(store db.Store) *TransactionRepositoryAdapt
 func (t *TransactionRepositoryAdapter) Save(ctx context.Context, transaction *domain.Transaction) (err error) {
 	arg := db.InsertTransactionParams{
 		ID:         transaction.ID(),
-		GiftID:     transaction.GiftID(),
 		ExternalID: transaction.ExternalID(),
 		Amount:     transaction.Amount(),
 		Date:       transaction.Date(),

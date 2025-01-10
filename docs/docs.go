@@ -43,9 +43,9 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/v1/files/upload": {
+        "/v1/files": {
             "post": {
-                "description": "File upload",
+                "description": "Upload file",
                 "consumes": [
                     "multipart/form-data"
                 ],
@@ -55,7 +55,7 @@ const docTemplate = `{
                 "tags": [
                     "files"
                 ],
-                "summary": "File upload",
+                "summary": "Upload file",
                 "parameters": [
                     {
                         "type": "file",
@@ -68,28 +68,49 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/v1/gifts": {
-            "post": {
-                "description": "Create a new gift",
+        "/v1/files/{id}": {
+            "get": {
+                "description": "Download file",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "application/octet-stream"
                 ],
                 "tags": [
-                    "gifts"
+                    "files"
                 ],
-                "summary": "Create a new gift",
+                "summary": "Download file",
                 "parameters": [
                     {
-                        "description": "the request body for gift creation",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/usecase.CreateGiftInput"
-                        }
+                        "type": "string",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Delete file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "files"
+                ],
+                "summary": "Delete file",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "File ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -97,7 +118,7 @@ const docTemplate = `{
         },
         "/v1/transactions": {
             "post": {
-                "description": "Create a new payment",
+                "description": "Create a new transaction",
                 "consumes": [
                     "application/json"
                 ],
@@ -107,7 +128,7 @@ const docTemplate = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Create a new payment",
+                "summary": "Create a new transaction",
                 "parameters": [
                     {
                         "description": "the request body for transaction creation",
@@ -115,7 +136,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/usecase.ProcessPaymentInput"
+                            "$ref": "#/definitions/usecase.GenerateChargeInput"
                         }
                     }
                 ],
@@ -151,21 +172,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "usecase.CreateGiftInput": {
-            "description": "CreateGiftInput represents the input for creating a gift",
-            "type": "object",
-            "properties": {
-                "gifter": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "recipient": {
-                    "type": "string"
-                }
-            }
-        },
         "usecase.CreateUserInput": {
             "type": "object",
             "properties": {
@@ -183,6 +189,15 @@ const docTemplate = `{
                 }
             }
         },
+        "usecase.GenerateChargeInput": {
+            "description": "GenerateChargeInput represents the input for creating a transaction",
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                }
+            }
+        },
         "usecase.GenerateTokenInput": {
             "type": "object",
             "properties": {
@@ -190,18 +205,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "usecase.ProcessPaymentInput": {
-            "description": "ProcessPaymentInput represents the input for creating a transaction",
-            "type": "object",
-            "properties": {
-                "amount": {
-                    "type": "number"
-                },
-                "giftId": {
                     "type": "string"
                 }
             }

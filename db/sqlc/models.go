@@ -13,51 +13,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type GiftStatus string
-
-const (
-	GiftStatusPENDING    GiftStatus = "PENDING"
-	GiftStatusPAID       GiftStatus = "PAID"
-	GiftStatusAPPROVED   GiftStatus = "APPROVED"
-	GiftStatusCANCELLING GiftStatus = "CANCELLING"
-	GiftStatusCANCELLED  GiftStatus = "CANCELLED"
-)
-
-func (e *GiftStatus) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GiftStatus(s)
-	case string:
-		*e = GiftStatus(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GiftStatus: %T", src)
-	}
-	return nil
-}
-
-type NullGiftStatus struct {
-	GiftStatus GiftStatus `json:"gift_status"`
-	Valid      bool       `json:"valid"` // Valid is true if GiftStatus is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGiftStatus) Scan(value interface{}) error {
-	if value == nil {
-		ns.GiftStatus, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GiftStatus.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGiftStatus) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GiftStatus), nil
-}
-
 type TransactionStatus string
 
 const (
@@ -110,17 +65,8 @@ type File struct {
 	Path      string    `json:"path"`
 }
 
-type Gift struct {
-	ID        uuid.UUID  `json:"id"`
-	Gifter    string     `json:"gifter"`
-	Recipient string     `json:"recipient"`
-	Message   string     `json:"message"`
-	Status    GiftStatus `json:"status"`
-}
-
 type Transaction struct {
 	ID         uuid.UUID         `json:"id"`
-	GiftID     uuid.UUID         `json:"gift_id"`
 	ExternalID string            `json:"external_id"`
 	Amount     pgtype.Numeric    `json:"amount"`
 	Date       time.Time         `json:"date"`

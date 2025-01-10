@@ -14,12 +14,10 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteFile(ctx context.Context, id uuid.UUID) error
 	GetFile(ctx context.Context, id uuid.UUID) (File, error)
-	GetGift(ctx context.Context, id uuid.UUID) (Gift, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (User, error)
 	InsertFile(ctx context.Context, arg InsertFileParams) (File, error)
-	InsertGift(ctx context.Context, arg InsertGiftParams) (Gift, error)
 	InsertTransaction(ctx context.Context, arg InsertTransactionParams) (Transaction, error)
 }
 

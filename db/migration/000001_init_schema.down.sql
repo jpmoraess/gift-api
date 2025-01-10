@@ -1,6 +1,4 @@
 DROP TABLE IF EXISTS files;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS gifts;
 DROP TABLE IF EXISTS transactions;
-DROP TYPE IF EXISTS gift_status;
 DROP TYPE IF EXISTS transaction_status;

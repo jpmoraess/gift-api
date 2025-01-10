@@ -113,7 +113,7 @@ func (a *AsaasGateway) CreatePayment(ctx context.Context, request *CreatePayment
 			fmt.Println("error while deserialize error response: ", err)
 			return
 		}
-		return nil, fmt.Errorf("error when creating the payment: %+v", errorResponse.Errors)
+		return nil, fmt.Errorf("error while creating the payment: %+v", errorResponse.Errors)
 	}
 
 	// deserializing response body to CreateBillingResponse struct

@@ -3,6 +3,7 @@ package chain
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/jpmoraess/gift-api/internal/infra/gateway"
@@ -22,7 +23,7 @@ func NewAsaasChargeGenerator(gateway *gateway.AsaasGateway, next ChargeGenerator
 }
 
 func (a *AsaasChargeGenerator) GenerateCharge(ctx context.Context, input *GenerateChargeInput) (output *GenerateChargeOutput, err error) {
-	fmt.Printf("generating charge through AsaasGateway, %+v\n", input)
+	log.Printf("generating charge through AsaasGateway for input: %+v\n", input)
 
 	request := &gateway.CreatePaymentRequest{
 		Customer:    "6348759",
@@ -33,16 +34,14 @@ func (a *AsaasChargeGenerator) GenerateCharge(ctx context.Context, input *Genera
 
 	response, err := a.gateway.CreatePayment(ctx, request)
 	if err != nil {
-		fmt.Println("error generate charge request:", err)
+		log.Printf("error creating payment: %+v\n", err)
 		return nil, err
 	}
-	fmt.Printf("generate charge success: %+v\n", response)
 
 	if len(response.ID) > 0 {
 		output = &GenerateChargeOutput{ID: response.ID}
 		return output, err
 	} else {
-		fmt.Println("failed processing payment request through Asaas...")
 		if a.next == nil {
 			return nil, fmt.Errorf("no next charge generator has been provided")
 		}
