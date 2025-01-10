@@ -11,7 +11,7 @@ import (
 	"github.com/jpmoraess/gift-api/config"
 )
 
-type AsaasPaymentGateway struct {
+type AsaasGateway struct {
 	config *config.Config
 	http   *http.Client
 }
@@ -25,16 +25,16 @@ const (
 	CreditCard BillingType = "CREDIT_CARD"
 )
 
-type CreateBillingCallback struct {
+type CreatePaymentCallback struct {
 	// SuccessURL - represents the URL that the customer will be redirected to after successful chain of the invoice or chain link
 	SuccessURL string `json:"successUrl"`
 	// AutoRedirect - Define whether the customer will be automatically redirected or will just be informed with a button to return to the website. The default is true, if you want to disable it, enter false
 	AutoRedirect bool `json:"autoRedirect"`
 }
 
-// CreateBillingRequest - Object to create billing
+// CreatePaymentRequest - Object to create billing
 // See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta
-type CreateBillingRequest struct {
+type CreatePaymentRequest struct {
 	// Customer - represents the unique customer identifier in Asaas
 	Customer string `json:"customer" validate:"required"`
 	// BillingType - represents the chain method (PIX, BOLETO, CREDIT_CARD)
@@ -47,7 +47,7 @@ type CreateBillingRequest struct {
 	Description string `json:"description"`
 }
 
-type CreateBillingResponse struct {
+type CreatePaymentResponse struct {
 	ID          string  `json:"id"`
 	CreatedDate string  `json:"dateCreated"`
 	Value       float64 `json:"value"`
@@ -60,17 +60,16 @@ type ErrorResponse struct {
 	} `json:"errors"`
 }
 
-func NewAsaasPaymentGateway(config *config.Config, http *http.Client) *AsaasPaymentGateway {
-	return &AsaasPaymentGateway{
+func NewAsaasGateway(config *config.Config, http *http.Client) *AsaasGateway {
+	return &AsaasGateway{
 		config: config,
 		http:   http,
 	}
 }
 
-// CreateBilling - create billing
+// CreatePayment - create payment
 // See: https://docs.asaas.com/reference/criar-nova-cobranca-com-dados-resumidos-na-resposta
-func (a *AsaasPaymentGateway) CreateBilling(ctx context.Context, request *CreateBillingRequest) (response *CreateBillingResponse, err error) {
-
+func (a *AsaasGateway) CreatePayment(ctx context.Context, request *CreatePaymentRequest) (response *CreatePaymentResponse, err error) {
 	url := fmt.Sprintf("%s/v3/lean/payments", a.config.AsaasUrl)
 
 	body, err := json.Marshal(request)
@@ -81,10 +80,10 @@ func (a *AsaasPaymentGateway) CreateBilling(ctx context.Context, request *Create
 
 	b := bytes.NewReader(body)
 
-	// creating the request
+	// creating the payment request
 	req, err := http.NewRequestWithContext(ctx, "POST", url, b)
 	if err != nil {
-		fmt.Println("error while creating a request:", err)
+		fmt.Println("error while creating a payment request:", err)
 		return
 	}
 	req.Header.Add("access_token", a.config.AsaasApiKey)
@@ -114,13 +113,13 @@ func (a *AsaasPaymentGateway) CreateBilling(ctx context.Context, request *Create
 			fmt.Println("error while deserialize error response: ", err)
 			return
 		}
-		return nil, fmt.Errorf("error when creating the charge: %+v", errorResponse.Errors)
+		return nil, fmt.Errorf("error when creating the payment: %+v", errorResponse.Errors)
 	}
 
 	// deserializing response body to CreateBillingResponse struct
 	err = json.Unmarshal(respBody, &response)
 	if err != nil {
-		fmt.Println("error while deserialize response: ", err)
+		fmt.Println("error while deserialize response:", err)
 		return
 	}
 

@@ -6,31 +6,31 @@ import (
 )
 
 type TransactionHandler struct {
-	processPayment *usecase.ProcessPayment
+	generateCharge *usecase.GenerateCharge
 }
 
-func NewTransactionHandler(processPayment *usecase.ProcessPayment) *TransactionHandler {
+func NewTransactionHandler(generateCharge *usecase.GenerateCharge) *TransactionHandler {
 	return &TransactionHandler{
-		processPayment: processPayment,
+		generateCharge: generateCharge,
 	}
 }
 
-// ProcessPayment - handles the payment processor
+// CreateTransaction - handles the transaction creation
 //
-//	@Summary		Create a new payment
-//	@Description	Create a new payment
+//	@Summary		Create a new transaction
+//	@Description	Create a new transaction
 //	@Tags			transactions
 //	@Accept			json
 //	@Produce		json
-//	@Param			request	body	usecase.ProcessPaymentInput	true	"the request body for transaction creation"
+//	@Param			request	body	usecase.GenerateChargeInput	true	"the request body for transaction creation"
 //	@Router			/v1/transactions [post]
-func (handler *TransactionHandler) ProcessPayment(c *fiber.Ctx) error {
-	input := new(usecase.ProcessPaymentInput)
-	if err := c.BodyParser(input); err != nil {
+func (handler *TransactionHandler) CreateTransaction(c *fiber.Ctx) error {
+	var input usecase.GenerateChargeInput
+	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	output, err := handler.processPayment.Execute(c.Context(), input)
+	output, err := handler.generateCharge.Execute(c.Context(), &input)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
 	}

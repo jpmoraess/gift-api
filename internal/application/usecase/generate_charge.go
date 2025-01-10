@@ -9,43 +9,43 @@ import (
 	"github.com/jpmoraess/gift-api/internal/infra/chain"
 )
 
-// ProcessPaymentInput represents the input for creating a transaction
+// GenerateChargeInput represents the input for creating a transaction
 // @Description ProcessPaymentInput represents the input for creating a transaction
 // @Model
-type ProcessPaymentInput struct {
+type GenerateChargeInput struct {
 	GiftID uuid.UUID `json:"giftId"`
 	Amount float64   `json:"amount"`
 }
 
-type ProcessPaymentOutput struct {
+type GenerateChargeOutput struct {
 	ID     uuid.UUID `json:"id"`
 	GiftID uuid.UUID `json:"giftId"`
 	Amount float64   `json:"amount"`
 }
 
-type ProcessPayment struct {
-	paymentProcessor      chain.PaymentProcessor
+type GenerateCharge struct {
+	generator             chain.ChargeGenerator
 	transactionRepository repository.TransactionRepository
 }
 
-func NewProcessPayment(
-	paymentProcessor chain.PaymentProcessor,
+func NewGenerateCharge(
+	generator chain.ChargeGenerator,
 	transactionRepository repository.TransactionRepository,
-) *ProcessPayment {
-	return &ProcessPayment{
-		paymentProcessor:      paymentProcessor,
+) *GenerateCharge {
+	return &GenerateCharge{
+		generator:             generator,
 		transactionRepository: transactionRepository,
 	}
 }
 
-func (p *ProcessPayment) Execute(ctx context.Context, input *ProcessPaymentInput) (output *ProcessPaymentOutput, err error) {
+func (g *GenerateCharge) Execute(ctx context.Context, input *GenerateChargeInput) (output *GenerateChargeOutput, err error) {
 	transaction, err := domain.NewTransaction(input.GiftID, input.Amount)
 	if err != nil {
 		fmt.Println("error while creating transaction:", err)
 		return
 	}
 
-	processPaymentOutput, err := p.paymentProcessor.ProcessPayment(ctx, &chain.ProcessPaymentInput{
+	processPaymentOutput, err := g.generator.GenerateCharge(ctx, &chain.GenerateChargeInput{
 		Amount:            transaction.Amount(),
 		ExternalReference: transaction.ID().String(),
 	})
@@ -55,13 +55,13 @@ func (p *ProcessPayment) Execute(ctx context.Context, input *ProcessPaymentInput
 	}
 	transaction.SetExternalID(processPaymentOutput.ID)
 
-	err = p.transactionRepository.Save(ctx, transaction)
+	err = g.transactionRepository.Save(ctx, transaction)
 	if err != nil {
 		fmt.Println("error while saving transaction:", err)
 		return
 	}
 
-	output = &ProcessPaymentOutput{
+	output = &GenerateChargeOutput{
 		ID:     transaction.ID(),
 		GiftID: transaction.GiftID(),
 		Amount: transaction.Amount(),

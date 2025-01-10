@@ -56,13 +56,13 @@ func main() {
 	store := db.NewStore(pool)
 
 	// payment gateway
-	asaasPaymentGateway := gateway.NewAsaasPaymentGateway(&config, &http.Client{})
+	asaasGateway := gateway.NewAsaasGateway(&config, &http.Client{})
 
 	// factory
-	paymentProcessorFactory := factory.NewPaymentProcessorFactory(asaasPaymentGateway)
+	chargeGeneratorFactory := factory.NewChargeGeneratorFactory(asaasGateway)
 
-	// processor
-	paymentProcessor := paymentProcessorFactory.CreatePaymentProcessor()
+	// chain
+	chargeGenerator := chargeGeneratorFactory.CreateChargeGeneratorChain()
 
 	// repository
 	fileRepository := storage.NewFileRepository(store)
@@ -74,7 +74,7 @@ func main() {
 	createGift := usecase.NewCreateGift(giftRepository)
 	createUser := usecase.NewCreateUser(userRepository)
 	generateToken := usecase.NewGenerateToken(tokenMaker, userRepository)
-	processPayment := usecase.NewProcessPayment(paymentProcessor, transactionRepository)
+	generateCharge := usecase.NewGenerateCharge(chargeGenerator, transactionRepository)
 
 	// storage
 	localStorage := storage.NewLocalStorage(config.FilePath)
@@ -93,7 +93,7 @@ func main() {
 	giftHandler := handlers.NewGiftHandler(createGift)
 	fileHandler := handlers.NewFileHandler(fileService)
 	tokenHandler := handlers.NewTokenHandler(generateToken)
-	transactionHandler := handlers.NewTransactionHandler(processPayment)
+	transactionHandler := handlers.NewTransactionHandler(generateCharge)
 
 	// routes
 	RegisterRoutes(app, userHandler, giftHandler, fileHandler, tokenHandler, transactionHandler)
@@ -122,7 +122,7 @@ func RegisterRoutes(
 	})
 
 	app.Post("/v1/transactions", func(c *fiber.Ctx) error {
-		return transactionHandler.ProcessPayment(c)
+		return transactionHandler.CreateTransaction(c)
 	})
 
 	app.Post("/v1/files", func(c *fiber.Ctx) error {
