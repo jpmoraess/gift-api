@@ -43,6 +43,7 @@ func (g *GenerateCharge) Execute(ctx context.Context, input *GenerateChargeInput
 
 	charge, err := g.generator.GenerateCharge(ctx, &chain.GenerateChargeInput{
 		Amount:            transaction.Amount(),
+		DueDate:           transaction.DueDate().Format("2006-01-02"),
 		ExternalReference: transaction.ID().String(),
 	})
 	if err != nil {

@@ -21,15 +21,17 @@ type Transaction struct {
 	externalID string
 	amount     float64
 	date       time.Time
+	dueDate    time.Time
 	status     TransactionStatus
 }
 
 func NewTransaction(amount float64) (transaction *Transaction, err error) {
 	transaction = &Transaction{
-		id:     uuid.New(),
-		amount: amount,
-		date:   time.Now(),
-		status: TransactionPending,
+		id:      uuid.New(),
+		amount:  amount,
+		date:    time.Now(),
+		dueDate: time.Now(),
+		status:  TransactionPending,
 	}
 
 	if err = transaction.validate(); err != nil {
@@ -88,6 +90,10 @@ func (t *Transaction) Amount() float64 {
 
 func (t *Transaction) Date() time.Time {
 	return t.date
+}
+
+func (t *Transaction) DueDate() time.Time {
+	return t.dueDate
 }
 
 func (t *Transaction) Status() TransactionStatus {

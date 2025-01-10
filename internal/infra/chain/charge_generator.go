@@ -4,7 +4,8 @@ import "context"
 
 // GenerateChargeInput - represents object to generate charge
 type GenerateChargeInput struct {
-	Amount float64 `json:"amount"`
+	Amount  float64 `json:"amount"`
+	DueDate string  `json:"dueDate"`
 	// ExternalReference - represents my application transaction id into gateway
 	ExternalReference string `json:"externalReference"`
 }

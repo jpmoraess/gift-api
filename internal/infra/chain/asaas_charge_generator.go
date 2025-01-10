@@ -2,11 +2,13 @@ package chain
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"time"
-
+	"errors"
 	"github.com/jpmoraess/gift-api/internal/infra/gateway"
+	"log"
+)
+
+var (
+	ErrNoNextGeneratorProvided = errors.New("no next generator provided")
 )
 
 type AsaasChargeGenerator struct {
@@ -26,10 +28,10 @@ func (a *AsaasChargeGenerator) GenerateCharge(ctx context.Context, input *Genera
 	log.Printf("generating charge through AsaasGateway for input: %+v\n", input)
 
 	request := &gateway.CreatePaymentRequest{
-		Customer:    "6348759",
+		Customer:    "6347643",
 		BillingType: gateway.Pix,
 		Value:       input.Amount,
-		DueDate:     time.Now().Format("2006-01-02"), // TODO: due date, valid date, week
+		DueDate:     input.DueDate,
 	}
 
 	response, err := a.gateway.CreatePayment(ctx, request)
@@ -43,7 +45,7 @@ func (a *AsaasChargeGenerator) GenerateCharge(ctx context.Context, input *Genera
 		return output, err
 	} else {
 		if a.next == nil {
-			return nil, fmt.Errorf("no next charge generator has been provided")
+			return nil, ErrNoNextGeneratorProvided
 		}
 		return a.next.GenerateCharge(ctx, input)
 	}
