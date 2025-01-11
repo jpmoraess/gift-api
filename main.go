@@ -67,11 +67,12 @@ func main() {
 	// repository
 	fileRepository := storage.NewFileRepository(store)
 	userRepository := persistence.NewUserRepositoryAdapter(store)
+	sessionRepository := persistence.NewSessionRepositoryAdapter(store)
 	transactionRepository := persistence.NewTransactionRepositoryAdapter(store)
 
 	// usecase
 	createUser := usecase.NewCreateUser(userRepository)
-	generateToken := usecase.NewGenerateToken(tokenMaker, userRepository)
+	generateToken := usecase.NewGenerateToken(&config, tokenMaker, userRepository, sessionRepository)
 	generateCharge := usecase.NewGenerateCharge(chargeGenerator, transactionRepository)
 
 	// storage

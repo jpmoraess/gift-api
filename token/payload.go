@@ -8,6 +8,7 @@ import (
 
 var (
 	ErrTokenExpired = errors.New("token expired")
+	ErrTokenInvalid = errors.New("token invalid")
 )
 
 // Payload - contains the payload data of the token
